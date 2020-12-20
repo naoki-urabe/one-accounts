@@ -1,0 +1,30 @@
+version: '3.7'
+services:
+  backend:
+    build: 
+        context: ./backend/
+        target: ${GO_CONTAINER_BUILD_TARGET}
+    tty: true
+    volumes:
+    - ./backend:/go/src/one-accounts
+    env_file: .env
+    depends_on:
+      - postgres
+    ports:
+      - 8080:8080
+    stdin_open: true
+  postgres:
+    image: postgres:13.1-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file: .env.dev.db
+  frontend:
+    build:
+      context: ./frontend/
+    volumes:
+      - ./frontend:/usr/local/frontend
+    ports:
+      - "3000:3000"
+    tty: true
+volumes:
+  postgres_data:
